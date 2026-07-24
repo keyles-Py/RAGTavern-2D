@@ -32,13 +32,13 @@ for fragment in text_fragments:
             )
     doc_fragments.append(new_doc)
 
-def update_tavern_db(vectordb, npc_name : str, player_msg : str, npc_reply : str):
+async def update_tavern_db(vectordb, npc_name : str, player_msg : str, npc_reply : str):
     info_contexto = f"El jugador le dijo a {npc_name}: '{player_msg}'. A lo que {npc_name} respondió: '{npc_reply}'."
     new_doc = Document(
                 page_content=info_contexto,
                 metadata={"source": "conversación_taberna", "author" : npc_name}
             )
-    vectordb.add_documents([new_doc])
+    await vectordb.aadd_documents([new_doc])
 
 
 historiales = {
@@ -46,7 +46,7 @@ historiales = {
         "Elena" : []
     }
 
-def generate_rag_response(player_msg : str, npc_name : str) -> str:
+async def generate_rag_response(player_msg : str, npc_name : str) -> str:
 
     if not os.path.exists(persist_directory) or len(os.listdir(persist_directory)) == 0: 
         vectordb = get_vector_db(doc_fragments)
@@ -82,7 +82,7 @@ def generate_rag_response(player_msg : str, npc_name : str) -> str:
     if not player_msg.strip():
         return "Seguire en lo mio."
 
-    response = rag_chain.invoke({
+    response = await rag_chain.ainvoke({
         "input": player_msg,
         "chat_history": historiales[npc_name],
         "personalidad": prompts_npc[npc_name]
@@ -93,6 +93,6 @@ def generate_rag_response(player_msg : str, npc_name : str) -> str:
         AIMessage(content=response['answer'])
     ])
 
-    update_tavern_db(vectordb, npc_name, player_msg, response['answer'])
+    await update_tavern_db(vectordb, npc_name, player_msg, response['answer'])
 
     return response['answer']

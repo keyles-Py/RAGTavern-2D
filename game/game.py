@@ -1,5 +1,7 @@
 import pygame
 import sys
+import asyncio
+import threading
 from game.classes import Player, Gimli, Elena
 from rag.rag import generate_rag_response
 
@@ -95,22 +97,28 @@ def run():
                         
                         if texto_usuario.strip():
                             nombre_npc = "Elena" if talking_to_elena else "Gimli" if talking_to_gimli else "Desconocido"
-                            response = generate_rag_response(texto_usuario, nombre_npc)
-                            respuesta_npc = response
+                            player_input = texto_usuario
+                            texto_usuario = ""
+                            lineas_respuesta_npc = ["Pensando..."]
 
-                            lineas_respuesta_npc = []
-                            palabras = respuesta_npc.split(' ')
-                            linea_actual = ""
-                            for palabra in palabras:
-                                if len(linea_actual) + len(palabra) < 150:
-                                    linea_actual += palabra + " "
-                                else:
-                                    lineas_respuesta_npc.append(linea_actual)
-                                    linea_actual = palabra + " "
-                            if linea_actual:
-                                lineas_respuesta_npc.append(linea_actual)
-                            
-                        texto_usuario = ""
+                            def fetch_response(msg, npc):
+                                nonlocal lineas_respuesta_npc
+                                respuesta_npc = asyncio.run(generate_rag_response(msg, npc))
+
+                                lineas = []
+                                palabras = respuesta_npc.split(' ')
+                                linea_actual = ""
+                                for palabra in palabras:
+                                    if len(linea_actual) + len(palabra) < 150:
+                                        linea_actual += palabra + " "
+                                    else:
+                                        lineas.append(linea_actual)
+                                        linea_actual = palabra + " "
+                                if linea_actual:
+                                    lineas.append(linea_actual)
+                                lineas_respuesta_npc = lineas
+
+                            threading.Thread(target=fetch_response, args=(player_input, nombre_npc), daemon=True).start()
 
         keys = pygame.key.get_pressed()
         dx = 0
