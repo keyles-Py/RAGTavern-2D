@@ -58,7 +58,7 @@ ollama run phi3
 
 2. Clonar el repositorio e instalar dependencias
 ```
-git clone [https://github.com/TU_USUARIO/RAGTavern-2D.git](https://github.com/TU_USUARIO/RAGTavern-2D.git)
+git clone [https://github.com/keyles-Py/RAGTavern-2D.git](https://github.com/keyles-Py/RAGTavern-2D.git)
 cd RAGTavern-2D
 pip install -r requirements.txt
 ```
@@ -81,3 +81,9 @@ python main.py
 * **Mostrar Hitboxes:** Al presionar 1, se mostrarán las hitboxes del juego. (un pequeño detalle :D)
 
 ## Screenshots del juego
+
+<img width="1406" height="766" alt="default" src="https://github.com/user-attachments/assets/35c1e05f-3caa-49c4-af78-8a3d101313f6" />
+
+<img width="1404" height="764" alt="elena_response" src="https://github.com/user-attachments/assets/6aeb38a7-a599-44d1-bdad-e69b3c3e480e" />
+
+<img width="1405" height="767" alt="gimli_response" src="https://github.com/user-attachments/assets/6d01f58a-ebb0-482c-b9ea-78c230c22e1c" />
