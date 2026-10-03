@@ -3,6 +3,7 @@ import sys
 import asyncio
 import threading
 from game.classes import Player, Gimli, Elena
+from game import music
 from rag.rag import generate_rag_response
 
 SCREEN_WIDTH = 1408
@@ -16,6 +17,10 @@ def run():
     pygame.display.set_caption("La Taberna del Drunken Dragon")
 
     screen =  pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+    music.load()
+    music.play()
+
     wallpaper = pygame.image.load("game/assets/smallerBackground.png").convert()
     barra = pygame.image.load("game/assets/barra2.png").convert_alpha()
 

@@ -1,3 +1,5 @@
 tavern_vector_db/
 __pycache__/
 venv/
+.pytest_cache/
+feature_list.json
