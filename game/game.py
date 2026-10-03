@@ -4,6 +4,7 @@ import asyncio
 import threading
 from game.classes import Player, Gimli, Elena
 from game import music
+from game import pause
 from rag.rag import generate_rag_response
 
 SCREEN_WIDTH = 1408
@@ -57,6 +58,7 @@ def run():
     area_elena = elena.rect.inflate(100, 100)
 
     fuente_chat = pygame.font.SysFont("Arial", 20)
+    fuente_pausa = pygame.font.SysFont("Arial", 40, bold=True)
     texto_usuario = ""
     lineas_respuesta_npc = []
     nombre_npc = ""
@@ -71,6 +73,13 @@ def run():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+            if pause.handle_event(event) == pause.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if pause.is_paused() or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                continue
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_2:
@@ -138,10 +147,11 @@ def run():
         if keys[pygame.K_s] or keys[pygame.K_DOWN]:  
             dy = 1  
 
-        if not talking_to_elena and not talking_to_gimli:
-            player.mover(dx, dy, obstaculos)
-        gimli.actualizar_autonomo(talking_to_gimli)
-        elena.actualizar_comportamiento(talking_to_elena)
+        if not pause.is_paused():
+            if not talking_to_elena and not talking_to_gimli:
+                player.mover(dx, dy, obstaculos)
+            gimli.actualizar_autonomo(talking_to_gimli)
+            elena.actualizar_comportamiento(talking_to_elena)
         
         screen.blit(wallpaper,(0,0))
         screen.blit(gimli.image, gimli.rect)
@@ -173,6 +183,10 @@ def run():
             for i in range(len(obstaculos)):
                 pygame.draw.rect(screen, (255,0,0), obstaculos[i], 2)
 
+        if pause.is_paused():
+            pause.draw_menu(screen, fuente_pausa)
+
         pygame.display.flip()
 
-run()
+if __name__ == "__main__":
+    run()
